@@ -16,12 +16,18 @@ public class GameBoard {
     private Texture bombTile;
     private Texture flagTile;
 
+    private final int TILE_SIZE = 25;
+    private final int X_OFFSET = 50;
+    private final int Y_OFFSET = 600;
+
     public GameBoard(GameplayScreen gameplayScreen) {
         this.gameplayScreen = gameplayScreen;
-        board = new int[16][30];
+        board = new int[13][13];
         numBombs = 50;
         numFlags = numBombs;
         loadGraphics();
+        placeAllBombs();
+
     }
 
     public GameBoard(GameplayScreen gameplayScreen, int numRows, int numCols, int numBombs) {
@@ -30,6 +36,8 @@ public class GameBoard {
         this.numBombs = numBombs;
         numFlags = numBombs;
         loadGraphics();
+        placeAllBombs();
+
     }
 
     public void loadGraphics() {
@@ -47,7 +55,58 @@ public class GameBoard {
         flagTile = new Texture("flagTile.jpg");
     }
 
+    private void testBoard() {
+        board[0][0] = 11; //numbers
+        board[0][1] = 12;
+        board[0][2] = 13;
+        board[0][3] = 14;
+        board[0][4] = 15;
+        board[0][5] = 16;
+        board[1][0] = 17;
+        board[1][1] = 18;
+        board[1][2] = 9; //bomb
+        board[1][3] = 21; //flag
+        board[1][4] = 10; //empty floor
+    }
+
     public void draw(SpriteBatch spriteBatch) {
-        spriteBatch.draw(emptyTile, 50, 650);
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++) {
+                int x = X_OFFSET + (col * TILE_SIZE);
+                int y = Y_OFFSET - (row * TILE_SIZE);
+
+                int value = board[row][col];
+
+                if (value <= 8) spriteBatch.draw(emptyTile, x, y);
+                else if (value == 9) spriteBatch.draw(bombTile, x, y);
+                else if (value == 10) spriteBatch.draw(emptyFloorTile,x ,y);
+                else if (value == 11) spriteBatch.draw(oneTile,x ,y);
+                else if (value == 12) spriteBatch.draw(twoTile,x ,y);
+                else if (value == 13) spriteBatch.draw(threeTile,x ,y);
+                else if (value == 14) spriteBatch.draw(fourTile,x ,y);
+                else if (value == 15) spriteBatch.draw(fiveTile,x ,y);
+                else if (value == 16) spriteBatch.draw(sixTile,x ,y);
+                else if (value == 17) spriteBatch.draw(sevenTile,x ,y);
+                else if (value == 18) spriteBatch.draw(eightTile,x ,y);
+                else if (value >= 19) spriteBatch.draw(flagTile, x, y);
+
+                //temp draw code, show all bombs
+                if (value == -1) spriteBatch.draw(bombTile, x, y);
+            }
+
+        }
+    }
+
+    private void placeAllBombs() {
+        int currentBombs = 0;
+        while (currentBombs < numBombs) {
+            int row = (int) (Math.random() * board.length);
+            int col = (int) (Math.random() * board[row].length);
+
+            if (board[row][col] != -1) {
+                board[row][col] = -1;
+                currentBombs++;
+            }
+        }
     }
 }
