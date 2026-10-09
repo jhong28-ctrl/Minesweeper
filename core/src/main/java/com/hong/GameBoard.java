@@ -3,6 +3,8 @@ package com.hong;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.ArrayList;
+
 public class GameBoard {
     private int[][] board;
     private int numBombs; //total number of bombs in the grid
@@ -28,6 +30,11 @@ public class GameBoard {
         loadGraphics();
         placeAllBombs();
 
+        //REMOVE LATER
+        ArrayList<Location> arr = getNeighbors(new Location(0,1));
+        for (int i = 0; i < arr.size(); i++) {
+            System.out.println("Neighbor " + i + " at " + arr.get(i));
+        }
     }
 
     public GameBoard(GameplayScreen gameplayScreen, int numRows, int numCols, int numBombs) {
@@ -108,5 +115,28 @@ public class GameBoard {
                 currentBombs++;
             }
         }
+    }
+
+    //return true if loc is a valid location in the grid(check to make sure it is in bounds of the board)
+    private boolean isValid(Location loc) {
+        int row = loc.getRow();
+        int col = loc.getCol();
+
+        return (row >= 0 && row < board.length) && (col >= 0 && col < board[row].length);
+    }
+
+    //returns 3-8 locations that neighbor the given loc
+    private ArrayList<Location> getNeighbors(Location loc) {
+        ArrayList<Location> arr = new ArrayList<>();
+        int row = loc.getRow();
+        int col = loc.getCol();
+        int[][] neighbors = {{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1,-1}, {1,0}, {1,1}};
+        for (int i = 0; i < neighbors.length; i++) {
+            Location neighbor = new Location(row + neighbors[i][0], col + neighbors[i][1]);
+            if (isValid(neighbor)) {
+                arr.add(neighbor);
+            }
+        }
+        return arr;
     }
 }
